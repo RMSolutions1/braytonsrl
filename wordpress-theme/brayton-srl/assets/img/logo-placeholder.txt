@@ -1,0 +1,2 @@
+Coloca aqui tu logo (logo.png) como respaldo si no usas el Personalizador de WordPress.
+El tema prioriza: Personalizador > este archivo.

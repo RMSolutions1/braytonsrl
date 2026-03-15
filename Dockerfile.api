@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci 2>/dev/null || npm install
+
+COPY prisma ./prisma/
+RUN npx prisma generate
+RUN npm prune --production
+
+COPY server ./server/
+
+ENV NODE_ENV=production
+ENV UPLOADS_DIR=/app/uploads
+
+EXPOSE 4000
+
+CMD ["node", "server/src/index.js"]

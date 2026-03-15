@@ -1,0 +1,90 @@
+/*
+Theme Name: BRAYTON SRL
+Theme URI: https://braytonsrl.com.ar
+Author: BRAYTON SRL
+Description: Tema corporativo BRAYTON SRL. Compatible con la identidad del sitio Next.js.
+Version: 1.0.0
+License: GNU GPL v2 or later
+Text Domain: brayton-srl
+*/
+
+:root {
+  --brayton-navy: #0a1628;
+  --brayton-blue: #0d2137;
+  --brayton-steel: #2d3e50;
+  --brayton-accent: #e85d04;
+  --brayton-accent-dark: #dc2f02;
+}
+
+body { font-family: system-ui, sans-serif; color: var(--brayton-steel); background: #fff; margin: 0; padding-top: 64px; }
+a { color: var(--brayton-accent); }
+img { max-width: 100%; height: auto; }
+
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 64px; background: var(--brayton-navy); border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center;
+}
+.site-header .header-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 1rem; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.site-header .logo-link {
+  display: inline-flex; padding: 6px 10px; background: #fff; border-radius: 8px;
+}
+.site-header .logo-link img { height: 40px; width: auto; max-width: 148px; object-fit: contain; }
+
+.site-header .nav-desktop { display: none; }
+@media (min-width: 1280px) {
+  .site-header .nav-desktop { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; }
+  .site-header .nav-desktop a { padding: 8px 12px; color: rgba(255,255,255,0.95); font-size: 0.875rem; border-radius: 6px; }
+  .site-header .nav-desktop a:hover { background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; }
+  .site-header .header-actions { display: flex; align-items: center; gap: 1.5rem; padding-left: 2rem; margin-left: 1rem; border-left: 1px solid rgba(255,255,255,0.15); }
+  .site-header .header-actions a { color: rgba(255,255,255,0.95); font-size: 0.875rem; text-decoration: none; }
+  .site-header .header-actions .btn-cta { padding: 10px 20px; background: var(--brayton-accent); color: #fff; font-weight: 600; border-radius: 8px; }
+  .site-header .header-actions .btn-cta:hover { background: var(--brayton-accent-dark); text-decoration: none; }
+}
+.site-header .nav-mobile-trigger { display: flex; width: 40px; height: 40px; color: #fff; border: none; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; }
+@media (min-width: 1280px) { .site-header .nav-mobile-trigger { display: none; } }
+
+.site-footer { background: var(--brayton-navy); color: #fff; padding: 3rem 1rem 2rem; }
+.site-footer .footer-inner { max-width: 1280px; margin: 0 auto; }
+.site-footer .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem; }
+@media (min-width: 768px) { .site-footer .footer-grid { grid-template-columns: repeat(5, 1fr); } }
+.site-footer .footer-brand { grid-column: span 2; }
+@media (min-width: 768px) { .site-footer .footer-brand { grid-column: span 1; } }
+.site-footer .footer-col h3 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,0.9); margin: 0 0 1rem; }
+.site-footer .footer-col ul { list-style: none; padding: 0; margin: 0; }
+.site-footer .footer-col a { font-size: 0.875rem; color: rgba(255,255,255,0.75); }
+.site-footer .footer-col a:hover { color: #fff; text-decoration: none; }
+.site-footer .footer-bottom { padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem; color: rgba(255,255,255,0.55); }
+
+.nav-desktop .nav-desktop-list { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.nav-desktop .nav-desktop-list a { display: block; }
+
+.site-main { min-height: 40vh; }
+.site-content { padding: 2rem 0 4rem; }
+.brayton-content-wrap { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+.brayton-full-width .brayton-full-width-wrap { max-width: none; padding: 0; }
+.entry-content { line-height: 1.7; }
+.entry-content > * + * { margin-top: 1.5em; }
+.entry-content .alignwide { max-width: 1280px; margin-left: auto; margin-right: auto; }
+.entry-content .alignfull { max-width: none; width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+.entry-header .entry-title { margin: 0 0 0.5rem; font-size: 1.75rem; }
+.entry-meta { font-size: 0.875rem; color: var(--brayton-steel); opacity: 0.85; }
+.brayton-post-card { padding: 1.5rem 0; border-bottom: 1px solid #e5e7eb; }
+.brayton-post-card .entry-title { margin: 0 0 0.5rem; font-size: 1.25rem; }
+.brayton-post-card .entry-title a { color: inherit; }
+.brayton-post-card .entry-title a:hover { color: var(--brayton-accent); }
+.brayton-btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.brayton-btn-accent { background: var(--brayton-accent); color: #fff; }
+.brayton-btn-accent:hover { background: var(--brayton-accent-dark); color: #fff; }
+.brayton-404-wrap { text-align: center; padding: 3rem 1rem; }
+.brayton-canvas-content { padding: 0; }
+
+.nav-mobile-panel { position: fixed; left: 0; right: 0; top: 64px; bottom: 0; z-index: 999; background: var(--brayton-blue); overflow-y: auto; padding: 1.5rem; }
+.nav-mobile-panel[hidden] { display: none; }
+.nav-mobile-panel a { display: block; padding: 0.75rem 0; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.nav-mobile-panel .nav-mobile-cta { margin-top: 1rem; text-align: center; background: var(--brayton-accent); color: #fff; border-radius: 8px; padding: 1rem; }
+.nav-mobile-panel .nav-mobile-login { border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; text-align: center; margin-top: 0.5rem; padding: 0.75rem; }
+@media (min-width: 1280px) { .nav-mobile-panel { display: none !important; } }

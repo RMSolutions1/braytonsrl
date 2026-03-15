@@ -1,0 +1,14 @@
+/* Estilos del editor Gutenberg - misma identidad que el tema */
+:root {
+  --brayton-navy: #0a1628;
+  --brayton-blue: #0d2137;
+  --brayton-steel: #2d3e50;
+  --brayton-accent: #e85d04;
+  --brayton-accent-dark: #dc2f02;
+}
+
+body { font-family: system-ui, sans-serif; color: var(--brayton-steel); line-height: 1.7; }
+a { color: var(--brayton-accent); }
+.editor-styles-wrapper .wp-block { max-width: 1280px; }
+.editor-styles-wrapper .alignwide { max-width: 1280px; }
+.editor-styles-wrapper .alignfull { max-width: none; }

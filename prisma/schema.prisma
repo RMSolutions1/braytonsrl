@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// SQLite: listo sin instalar nada. Para producción con PostgreSQL, cambia a provider = "postgresql" y url = env("DATABASE_URL")
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  permissions RolePermission[]
+  users       User[]
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  resource    String
+  action      String
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  @@id([roleId, permissionId])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  roleId        String
+  role          Role      @relation(fields: [roleId], references: [id])
+  employeeId    String?   @unique
+  employee      Employee? @relation(fields: [employeeId], references: [id])
+  clientId      String?   @unique
+  client        Client?   @relation(fields: [clientId], references: [id])
+  providerId    String?   @unique
+  provider      Provider? @relation(fields: [providerId], references: [id])
+  refreshTokens RefreshToken[]
+  notifications Notification[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  active        Boolean   @default(true)
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Employee {
+  id            String    @id @default(cuid())
+  employeeCode  String    @unique
+  firstName     String
+  lastName      String
+  dni           String    @unique
+  email         String
+  phone         String?
+  address       String?
+  hireDate      DateTime
+  position      String
+  area          String
+  salary        Decimal
+  active        Boolean   @default(true)
+  user          User?
+  payrolls      Payroll[]
+  documents     EmployeeDocument[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Payroll {
+  id              String         @id @default(cuid())
+  employeeId      String
+  employee        Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  periodMonth     Int
+  periodYear      Int
+  baseSalary      Decimal        @default(0)
+  bonuses         Decimal        @default(0)
+  deductions      Decimal        @default(0)
+  overtimeHours   Decimal        @default(0)
+  overtimeAmount  Decimal        @default(0)
+  netAmount       Decimal
+  receipt         SalaryReceipt?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  @@unique([employeeId, periodMonth, periodYear])
+}
+
+model SalaryReceipt {
+  id        String   @id @default(cuid())
+  payrollId String   @unique
+  payroll   Payroll  @relation(fields: [payrollId], references: [id], onDelete: Cascade)
+  fileKey   String
+  fileName  String
+  createdAt DateTime @default(now())
+}
+
+model EmployeeDocument {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  type       String
+  fileKey    String
+  fileName   String
+  createdAt  DateTime @default(now())
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  company   String
+  contact   String
+  email     String
+  phone     String?
+  address   String?
+  user      User?
+  projects  Project[]
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Provider {
+  id        String    @id @default(cuid())
+  company   String
+  contact   String
+  email     String
+  phone     String?
+  services  String?
+  user      User?
+  payments  Payment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  name        String
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  location    String?
+  budget      Decimal?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("planificación")
+  documents   ProjectDocument[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ProjectDocument {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      String
+  fileKey   String
+  fileName  String
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  projectId   String?
+  number      String    @unique
+  amount      Decimal
+  issueDate   DateTime
+  dueDate     DateTime?
+  status      String    @default("pendiente")
+  payments    Payment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  invoiceId  String?
+  invoice    Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  providerId String?
+  provider   Provider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  amount     Decimal
+  date       DateTime
+  reference  String?
+  type       String
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model CompanyDocument {
+  id         String   @id @default(cuid())
+  category   String
+  fileKey    String
+  fileName   String
+  createdAt  DateTime @default(now())
+}

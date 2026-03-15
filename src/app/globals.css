@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brayton-navy: #0a1628;
+  --brayton-blue: #0d2137;
+  --brayton-steel: #2d3e50;
+  --brayton-accent: #e85d04;
+  --brayton-accent-light: #f48c06;
+  --brayton-muted: #64748b;
+  --section-padding-y: 5rem;
+  --section-padding-y-lg: 6.5rem;
+  --content-max: 72rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  @apply bg-white text-brayton-steel font-body antialiased;
+  overflow-x: hidden;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
