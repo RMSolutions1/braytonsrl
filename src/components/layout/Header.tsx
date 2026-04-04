@@ -138,7 +138,7 @@ export default function Header() {
               className="flex shrink-0 items-center"
               aria-label="BRAYTON SRL - Inicio"
             >
-              <BraytonLogo className="h-10 w-auto lg:h-12" />
+              <BraytonLogo className="h-6 w-auto lg:h-7" />
             </Link>
 
             {/* Desktop nav */}
@@ -275,7 +275,7 @@ export default function Header() {
               className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm bg-white shadow-2xl lg:hidden"
             >
               <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4">
-                <BraytonLogo className="h-9 w-auto" />
+                <BraytonLogo className="h-5 w-auto" />
                 <button
                   type="button"
                   className="flex h-10 w-10 items-center justify-center rounded-lg text-brayton-navy hover:bg-gray-100 transition-colors"
