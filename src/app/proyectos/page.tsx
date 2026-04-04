@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import ProyectosClient from './ProyectosClient';
-import { projects } from '@/data/projects';
 
 export const metadata: Metadata = {
   title: 'Proyectos',
@@ -29,7 +28,7 @@ export default function ProyectosPage() {
           </p>
         </div>
       </section>
-      <ProyectosClient initialProjects={projects} />
+      <ProyectosClient />
     </>
   );
 }

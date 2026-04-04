@@ -5,11 +5,16 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Menu, X, LogOut, BarChart3, Mail, FileText, Users } from 'lucide-react';
 
+import { Settings, Wrench } from 'lucide-react';
+
 const MENU = [
   { href: '/dashboard', label: 'Panel Principal', icon: BarChart3, roles: ['SuperAdmin', 'Administrador'] },
   { href: '/dashboard/messages', label: 'Mensajes de Contacto', icon: Mail, roles: ['SuperAdmin', 'Administrador'] },
   { href: '/dashboard/quotes', label: 'Cotizaciones', icon: FileText, roles: ['SuperAdmin', 'Administrador'] },
   { href: '/dashboard/applications', label: 'Solicitudes de Empleo', icon: Users, roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
+  { href: '/dashboard/services', label: 'Gestionar Servicios', icon: Wrench, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/projects', label: 'Gestionar Proyectos', icon: Settings, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/sectors', label: 'Gestionar Sectores', icon: Settings, roles: ['SuperAdmin', 'Administrador'] },
   { href: '/dashboard/empleados', label: 'Empleados', icon: Users, roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
   { href: '/dashboard/usuarios', label: 'Usuarios', icon: Users, roles: ['SuperAdmin', 'Administrador'] },
 ];
