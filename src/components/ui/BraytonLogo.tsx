@@ -99,7 +99,6 @@ export default function BraytonLogo({
         fontWeight="500"
         letterSpacing="0.15em"
         fontFamily="var(--font-dm-sans), system-ui, sans-serif"
-        textTransform="uppercase"
       >
         INGENIERIA Y CONSTRUCCION
       </text>
