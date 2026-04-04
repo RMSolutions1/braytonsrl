@@ -3,17 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Menu, X, LogOut, BarChart3, Mail, FileText, Users } from 'lucide-react';
 
 const MENU = [
-  { href: '/dashboard', label: 'Inicio', roles: ['SuperAdmin', 'Administrador', 'RRHH', 'Contabilidad', 'Supervisor de obra'] },
-  { href: '/dashboard/empleados', label: 'Empleados', roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
-  { href: '/dashboard/sueldos', label: 'Sueldos y recibos', roles: ['SuperAdmin', 'Administrador', 'RRHH', 'Contabilidad', 'Empleado'] },
-  { href: '/dashboard/clientes', label: 'Clientes', roles: ['SuperAdmin', 'Administrador', 'Cliente'] },
-  { href: '/dashboard/proveedores', label: 'Proveedores', roles: ['SuperAdmin', 'Administrador', 'Proveedor'] },
-  { href: '/dashboard/proyectos', label: 'Proyectos', roles: ['SuperAdmin', 'Administrador', 'Supervisor de obra', 'Cliente'] },
-  { href: '/dashboard/facturas', label: 'Facturación', roles: ['SuperAdmin', 'Administrador', 'Contabilidad', 'Cliente'] },
-  { href: '/dashboard/pagos', label: 'Pagos', roles: ['SuperAdmin', 'Administrador', 'Contabilidad', 'Proveedor'] },
-  { href: '/dashboard/usuarios', label: 'Usuarios', roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard', label: 'Panel Principal', icon: BarChart3, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/messages', label: 'Mensajes de Contacto', icon: Mail, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/quotes', label: 'Cotizaciones', icon: FileText, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/applications', label: 'Solicitudes de Empleo', icon: Users, roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
+  { href: '/dashboard/empleados', label: 'Empleados', icon: Users, roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
+  { href: '/dashboard/usuarios', label: 'Usuarios', icon: Users, roles: ['SuperAdmin', 'Administrador'] },
 ];
 
 export default function DashboardLayout({
@@ -65,33 +63,39 @@ export default function DashboardLayout({
             BRAYTON <span className="text-brayton-accent">SRL</span>
           </Link>
           <button type="button" className="lg:hidden p-2" onClick={() => setSidebarOpen(false)} aria-label="Cerrar menú">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            <X size={20} />
           </button>
         </div>
         <nav className="p-4 space-y-1">
-          {visibleMenu.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                pathname === item.href ? 'bg-brayton-accent text-white' : 'text-white/80 hover:bg-white/10'
-              }`}
-              onClick={() => setSidebarOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {visibleMenu.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === item.href ? 'bg-brayton-accent text-white' : 'text-white/80 hover:bg-white/10'
+                }`}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Icon size={20} />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </aside>
+
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8">
           <button type="button" className="lg:hidden p-2" onClick={() => setSidebarOpen(true)} aria-label="Abrir menú">
-            <svg className="w-6 h-6 text-brayton-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <Menu size={24} className="text-brayton-navy" />
           </button>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-brayton-slate">{user.role}</span>
-            <button type="button" onClick={logout} className="text-sm text-brayton-accent hover:underline">
-              Cerrar sesión
+          <div className="flex items-center gap-4 ml-auto">
+            <span className="text-sm font-semibold text-brayton-navy">{user.role}</span>
+            <button type="button" onClick={logout} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brayton-accent/10 text-brayton-accent hover:bg-brayton-accent/20 transition-colors">
+              <LogOut size={16} />
+              <span className="text-sm font-medium">Cerrar sesión</span>
             </button>
           </div>
         </header>

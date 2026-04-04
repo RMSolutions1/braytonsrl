@@ -26,9 +26,8 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
     try {
-      const res = await fetch(apiUrl + '/api/contact', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -37,7 +36,10 @@ export default function ContactForm() {
       if (!res.ok) throw new Error(data.error || 'Error al enviar');
       setStatus('success');
       setFormData({ name: '', company: '', email: '', phone: '', projectType: '', message: '' });
-    } catch {
+      // Reset status after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      console.error('Error:', error);
       setStatus('error');
     }
   };
