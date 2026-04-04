@@ -100,7 +100,7 @@ export default function Footer() {
             {/* Logo and description */}
             <div className="col-span-2 lg:col-span-2">
               <Link href="/" className="inline-block">
-                <BraytonLogo className="h-14 w-auto" color="light" />
+                <BraytonLogo className="h-14 w-auto" />
               </Link>
               <p className="mt-6 text-sm text-white/60 leading-relaxed max-w-sm">
                 Empresa salteña de ingenieria y construccion con amplia trayectoria en obras publicas y privadas. Soluciones integrales llave en mano.
