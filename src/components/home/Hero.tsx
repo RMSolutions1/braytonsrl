@@ -2,66 +2,98 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const slides = [
   {
-    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80',
-    overline: 'Construcción profesional',
-    title: 'Desde 2020',
-    highlight: 'años de excelencia',
-    description: 'Empresa salteña dedicada a obras públicas, construcción civil, instalaciones e infraestructura.',
-    ctaPrimary: 'Solicitar cotización',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1920&q=85',
+    overline: 'Construccion Profesional',
+    title: 'Construimos el futuro',
+    highlight: 'con excelencia',
+    description: 'Empresa salteña lider en ingenieria, construccion y servicios integrales. Mas de 150 proyectos ejecutados con los mas altos estandares de calidad.',
+    ctaPrimary: 'Solicitar Cotizacion',
     ctaPrimaryHref: '/contacto',
-    ctaSecondary: 'Ver proyectos',
+    ctaSecondary: 'Ver Proyectos',
     ctaSecondaryHref: '/proyectos',
   },
   {
-    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1920&q=80',
-    overline: 'Obras industriales y comerciales',
+    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=85',
+    overline: 'Soluciones Integrales',
     title: 'Un solo responsable',
     highlight: 'de principio a fin',
-    description: 'Diseño, ingeniería, construcción e instalaciones. Entregas en tiempo y forma.',
-    ctaPrimary: 'Nuestros servicios',
+    description: 'Diseño, ingenieria, construccion e instalaciones bajo un mismo contrato. Garantizamos plazos, calidad y presupuesto acordado.',
+    ctaPrimary: 'Nuestros Servicios',
     ctaPrimaryHref: '/servicios',
-    ctaSecondary: 'Sectores',
+    ctaSecondary: 'Conocer Sectores',
     ctaSecondaryHref: '/sectores',
   },
   {
-    image: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1920&q=80',
-    overline: 'Experiencia y capacidad',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=85',
+    overline: 'Experiencia Comprobada',
     title: 'Confianza y escala',
     highlight: 'para su proyecto',
-    description: 'Trabajamos con empresas, organismos públicos e instituciones que exigen calidad y un partner confiable.',
-    ctaPrimary: 'Conocer más',
+    description: 'Trabajamos con empresas, organismos publicos e instituciones que exigen calidad, profesionalismo y un partner confiable.',
+    ctaPrimary: 'Sobre Nosotros',
     ctaPrimaryHref: '/nosotros',
-    ctaSecondary: 'Contacto',
+    ctaSecondary: 'Contactar',
     ctaSecondaryHref: '/contacto',
   },
 ];
 
-const DURATION_MS = 6000;
+const stats = [
+  { value: '5+', label: 'Años de Experiencia' },
+  { value: '150+', label: 'Proyectos Completados' },
+  { value: '6', label: 'Sectores de Actividad' },
+  { value: '100%', label: 'Compromiso' },
+];
+
+const DURATION_MS = 7000;
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
   const slide = slides[index];
 
-  useEffect(() => {
-    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), DURATION_MS);
-    return () => clearInterval(t);
+  const nextSlide = useCallback(() => {
+    setIndex((i) => (i + 1) % slides.length);
+    setProgress(0);
   }, []);
 
+  const prevSlide = useCallback(() => {
+    setIndex((i) => (i - 1 + slides.length) % slides.length);
+    setProgress(0);
+  }, []);
+
+  const goToSlide = useCallback((i: number) => {
+    setIndex(i);
+    setProgress(0);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 100) {
+          nextSlide();
+          return 0;
+        }
+        return p + (100 / (DURATION_MS / 50));
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, [nextSlide]);
+
   return (
-    <section className="relative min-h-[88vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#0a1628]">
+    <section className="relative min-h-[100svh] flex flex-col bg-brayton-navy overflow-hidden">
+      {/* Background Images */}
       <div className="absolute inset-0">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
             className="absolute inset-0"
           >
             <Image
@@ -71,98 +103,204 @@ export default function Hero() {
               className="object-cover"
               priority={index === 0}
               sizes="100vw"
+              quality={85}
             />
-            <div className="absolute inset-0 bg-[#0a1628]/80" />
+            {/* Gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-r from-brayton-navy via-brayton-navy/80 to-brayton-navy/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brayton-navy via-transparent to-brayton-navy/30" />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-28 text-center">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.35 }}
-            className="max-w-2xl mx-auto"
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.25em] text-brayton-accent mb-4">
-              {slide.overline}
-            </p>
-            <h1 className="font-display font-semibold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white tracking-tight">
-              {slide.title}
-              <br />
-              <span className="text-brayton-accent">{slide.highlight}</span>
-            </h1>
-            <p className="mt-5 text-base sm:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
-              {slide.description}
-            </p>
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href={slide.ctaPrimaryHref}
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-brayton-accent text-white text-sm font-medium transition-colors hover:bg-[#c95203]"
-              >
-                {slide.ctaPrimary}
-              </Link>
-              <Link
-                href={slide.ctaSecondaryHref}
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-md border border-white/30 text-white text-sm font-medium transition-colors hover:bg-white/10"
-              >
-                {slide.ctaSecondary}
-              </Link>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-brayton-accent/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-brayton-accent/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-white/[0.06] bg-[#0a1628]/95">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-          <div className="grid grid-cols-3 gap-6 sm:gap-8 text-center">
-            <div>
-              <p className="font-display font-semibold text-xl sm:text-2xl text-brayton-accent">5+</p>
-              <p className="text-[11px] sm:text-xs text-white/50 mt-0.5 uppercase tracking-wider">Años</p>
-            </div>
-            <div>
-              <p className="font-display font-semibold text-xl sm:text-2xl text-brayton-accent">150+</p>
-              <p className="text-[11px] sm:text-xs text-white/50 mt-0.5 uppercase tracking-wider">Proyectos</p>
-            </div>
-            <div>
-              <p className="font-display font-semibold text-xl sm:text-2xl text-brayton-accent">5</p>
-              <p className="text-[11px] sm:text-xs text-white/50 mt-0.5 uppercase tracking-wider">Áreas</p>
-            </div>
+      {/* Main content */}
+      <div className="relative z-10 flex-1 flex items-center">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+          <div className="max-w-3xl">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              >
+                {/* Overline */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="flex items-center gap-3 mb-6"
+                >
+                  <span className="h-px w-12 bg-brayton-accent" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brayton-accent">
+                    {slide.overline}
+                  </span>
+                </motion.div>
+
+                {/* Title */}
+                <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.1] tracking-tight">
+                  {slide.title}
+                  <br />
+                  <span className="text-brayton-accent">{slide.highlight}</span>
+                </h1>
+
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-6 text-lg sm:text-xl text-white/70 max-w-xl leading-relaxed"
+                >
+                  {slide.description}
+                </motion.p>
+
+                {/* CTAs */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-10 flex flex-col sm:flex-row gap-4"
+                >
+                  <Link
+                    href={slide.ctaPrimaryHref}
+                    className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-brayton-accent text-white text-base font-semibold shadow-xl shadow-brayton-accent/30 transition-all hover:bg-brayton-accent-dark hover:-translate-y-0.5"
+                  >
+                    {slide.ctaPrimary}
+                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href={slide.ctaSecondaryHref}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg border-2 border-white/20 text-white text-base font-semibold backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/30"
+                  >
+                    {slide.ctaSecondary}
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)}
-        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/15 bg-white/5 text-white flex items-center justify-center transition-colors hover:bg-white/10"
-        aria-label="Anterior"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-      </button>
-      <button
-        type="button"
-        onClick={() => setIndex((i) => (i + 1) % slides.length)}
-        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/15 bg-white/5 text-white flex items-center justify-center transition-colors hover:bg-white/10"
-        aria-label="Siguiente"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-      </button>
-
-      <div className="absolute bottom-20 sm:bottom-18 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+      {/* Slide controls */}
+      <div className="absolute right-4 sm:right-8 lg:right-12 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-3">
         {slides.map((_, i) => (
           <button
             key={i}
             type="button"
-            onClick={() => setIndex(i)}
-            className={`h-1.5 w-1.5 rounded-full transition-colors ${i === index ? 'bg-brayton-accent' : 'bg-white/40 hover:bg-white/60'}`}
-            aria-label={`Slide ${i + 1}`}
+            onClick={() => goToSlide(i)}
+            className={`relative w-3 h-3 rounded-full transition-all duration-300 ${
+              i === index 
+                ? 'bg-brayton-accent scale-125' 
+                : 'bg-white/30 hover:bg-white/50'
+            }`}
+            aria-label={`Ir a slide ${i + 1}`}
+          >
+            {i === index && (
+              <svg className="absolute -inset-1.5 w-6 h-6" viewBox="0 0 24 24">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="text-brayton-accent/40"
+                  strokeDasharray={`${progress * 0.628} 100`}
+                  strokeLinecap="round"
+                  transform="rotate(-90 12 12)"
+                />
+              </svg>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Navigation arrows */}
+      <button
+        type="button"
+        onClick={prevSlide}
+        className="absolute left-4 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-white flex items-center justify-center transition-all hover:bg-white/10 hover:scale-110"
+        aria-label="Anterior"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        onClick={nextSlide}
+        className="absolute right-4 sm:right-6 lg:right-8 md:right-20 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-white flex items-center justify-center transition-all hover:bg-white/10 hover:scale-110 md:hidden"
+        aria-label="Siguiente"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Stats bar */}
+      <div className="relative z-10 border-t border-white/10 bg-brayton-navy/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="py-6 lg:py-8 text-center"
+              >
+                <p className="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-brayton-accent">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-xs sm:text-sm text-white/50 uppercase tracking-wider">
+                  {stat.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile slide indicators */}
+      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20 flex gap-2 md:hidden">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => goToSlide(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === index ? 'w-8 bg-brayton-accent' : 'w-1.5 bg-white/40'
+            }`}
+            aria-label={`Ir a slide ${i + 1}`}
           />
         ))}
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 hidden lg:flex flex-col items-center gap-2"
+      >
+        <span className="text-xs text-white/40 uppercase tracking-widest">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center p-1"
+        >
+          <div className="w-1 h-2 rounded-full bg-white/50" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
