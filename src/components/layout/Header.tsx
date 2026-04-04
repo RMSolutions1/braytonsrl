@@ -102,9 +102,9 @@ export default function Header() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-10 items-center justify-between text-xs">
             <div className="flex items-center gap-6 text-white/60">
-              <a href="tel:+5491112345678" className="flex items-center gap-2 hover:text-white transition-colors">
+              <a href="tel:+543874498588" className="flex items-center gap-2 hover:text-white transition-colors">
                 <PhoneIcon />
-                <span>+54 9 11 1234-5678</span>
+                <span>+54 387 4498588</span>
               </a>
               <span className="hidden xl:block">Lun - Vie: 8:00 - 18:00</span>
             </div>
@@ -375,11 +375,11 @@ export default function Header() {
                     <ArrowRightIcon />
                   </Link>
                   <a
-                    href="tel:+5491112345678"
+                    href="tel:+543874498588"
                     className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 py-3 text-base font-medium text-brayton-navy transition-colors hover:bg-gray-50"
                   >
                     <PhoneIcon />
-                    +54 9 11 1234-5678
+                    +54 387 4498588
                   </a>
                 </div>
               </nav>

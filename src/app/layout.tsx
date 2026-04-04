@@ -54,7 +54,7 @@ const organizationSchema = {
   logo: 'https://braytonsrl.com.ar/logo.png',
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+54-9-11-1234-5678',
+    telephone: '+54-387-4498588',
     contactType: 'customer service',
     email: 'contacto@braytonsrl.com.ar',
     areaServed: 'AR',

@@ -88,10 +88,10 @@ export default function ContactoPage() {
                   <div>
                     <h3 className="font-display font-bold text-lg mb-2">Teléfono</h3>
                     <a 
-                      href="tel:+5491112345678" 
+                      href="tel:+543874498588" 
                       className="text-white hover:text-white/80 transition font-semibold flex items-center gap-2 group"
                     >
-                      +54 9 11 1234-5678
+                      +54 387 4498588
                       <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                     </a>
                   </div>
@@ -170,7 +170,7 @@ export default function ContactoPage() {
               <ArrowRight size={20} />
             </a>
             <a 
-              href="tel:+5491112345678"
+              href="tel:+543874498588"
               className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition-colors"
             >
               <Phone size={20} />

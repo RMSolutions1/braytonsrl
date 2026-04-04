@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const WHATSAPP_NUMBER = '5491112345678';
+const WHATSAPP_NUMBER = '543874498588';
 const DEFAULT_MESSAGE = 'Hola, me interesa conocer más sobre los servicios de BRAYTON SRL.';
 
 export default function WhatsAppButton() {

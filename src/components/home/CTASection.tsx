@@ -47,7 +47,7 @@ export default function CTASection() {
             {/* Contact info */}
             <div className="mt-10 space-y-5">
               <a 
-                href="tel:+5491112345678" 
+                href="tel:+543874498588" 
                 className="group flex items-center gap-4 text-white/85 hover:text-white transition-colors"
               >
                 <span className="w-12 h-12 rounded-xl bg-brayton-accent/20 flex items-center justify-center text-brayton-accent group-hover:bg-brayton-accent group-hover:text-white transition-all">
@@ -57,7 +57,7 @@ export default function CTASection() {
                 </span>
                 <div>
                   <p className="text-xs text-white/50">Llamenos</p>
-                  <p className="font-semibold">+54 9 11 1234-5678</p>
+                  <p className="font-semibold">+54 387 4498588</p>
                 </div>
               </a>
               
