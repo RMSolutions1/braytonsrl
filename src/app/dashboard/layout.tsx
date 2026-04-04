@@ -30,19 +30,30 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const u = localStorage.getItem('user');
-    if (!u) {
-      router.replace('/login');
-      return;
-    }
-    setUser(JSON.parse(u));
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        } else {
+          router.replace('/admin/login');
+        }
+      } catch {
+        router.replace('/admin/login');
+      }
+    };
+
+    checkAuth();
   }, [router]);
 
-  const logout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    router.replace('/login');
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+    router.replace('/admin/login');
     router.refresh();
   };
 
