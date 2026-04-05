@@ -8,6 +8,19 @@ const sql = neon(process.env.DATABASE_URL!);
 // Solo funciona si no existe ningún admin
 export async function GET() {
   try {
+    // Primero, crear la tabla si no existe
+    await sql`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        role VARCHAR(20) NOT NULL DEFAULT 'Administrador',
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     // Verificar si ya existe un admin
     const existingAdmin = await sql`
       SELECT id FROM admin_users WHERE username = 'admin'
