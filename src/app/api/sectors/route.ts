@@ -5,7 +5,7 @@ const sql = neon(process.env.DATABASE_URL!);
 
 export async function GET() {
   try {
-    const sectors = await sql`SELECT * FROM cms_sectors ORDER BY sort_order ASC`;
+    const sectors = await sql`SELECT * FROM cms_sectors WHERE is_active = true ORDER BY display_order ASC`;
     return NextResponse.json(sectors);
   } catch (error) {
     console.error('Error fetching sectors:', error);
@@ -16,18 +16,20 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, description, icon, color, sort_order } = body;
+    const { title, slug, short_description, full_description, icon, image_url, display_order, is_active } = body;
 
-    if (!name || !description) {
+    if (!title || !short_description) {
       return NextResponse.json(
-        { error: 'Nombre y descripción son requeridos' },
+        { error: 'Título y descripción son requeridos' },
         { status: 400 }
       );
     }
 
+    const generatedSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
     const sector = await sql`
-      INSERT INTO cms_sectors (name, description, icon, color, sort_order, created_at, updated_at)
-      VALUES (${name}, ${description}, ${icon || ''}, ${color || '#000000'}, ${sort_order || 0}, NOW(), NOW())
+      INSERT INTO cms_sectors (title, slug, short_description, full_description, icon, image_url, display_order, is_active, created_at, updated_at)
+      VALUES (${title}, ${generatedSlug}, ${short_description}, ${full_description || ''}, ${icon || ''}, ${image_url || ''}, ${display_order || 0}, ${is_active !== false}, NOW(), NOW())
       RETURNING *
     `;
 
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, name, description, icon, color, sort_order } = body;
+    const { id, title, slug, short_description, full_description, icon, image_url, display_order, is_active } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
@@ -49,11 +51,14 @@ export async function PUT(req: NextRequest) {
 
     const sector = await sql`
       UPDATE cms_sectors 
-      SET name = ${name}, 
-          description = ${description},
+      SET title = ${title}, 
+          slug = ${slug},
+          short_description = ${short_description},
+          full_description = ${full_description},
           icon = ${icon},
-          color = ${color},
-          sort_order = ${sort_order},
+          image_url = ${image_url},
+          display_order = ${display_order},
+          is_active = ${is_active},
           updated_at = NOW()
       WHERE id = ${id}
       RETURNING *

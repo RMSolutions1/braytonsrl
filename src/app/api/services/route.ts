@@ -5,7 +5,7 @@ const sql = neon(process.env.DATABASE_URL!);
 
 export async function GET() {
   try {
-    const services = await sql`SELECT * FROM cms_services ORDER BY sort_order ASC`;
+    const services = await sql`SELECT * FROM cms_services WHERE is_active = true ORDER BY display_order ASC`;
     return NextResponse.json(services);
   } catch (error) {
     console.error('Error fetching services:', error);
@@ -16,18 +16,20 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, description, image_url, details, sort_order } = body;
+    const { title, slug, short_description, full_description, icon, image_url, features, display_order, is_active } = body;
 
-    if (!title || !description) {
+    if (!title || !short_description) {
       return NextResponse.json(
         { error: 'Título y descripción son requeridos' },
         { status: 400 }
       );
     }
 
+    const generatedSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
     const service = await sql`
-      INSERT INTO cms_services (title, description, image_url, details, sort_order, created_at, updated_at)
-      VALUES (${title}, ${description}, ${image_url || ''}, ${details || ''}, ${sort_order || 0}, NOW(), NOW())
+      INSERT INTO cms_services (title, slug, short_description, full_description, icon, image_url, features, display_order, is_active, created_at, updated_at)
+      VALUES (${title}, ${generatedSlug}, ${short_description}, ${full_description || ''}, ${icon || ''}, ${image_url || ''}, ${JSON.stringify(features || [])}, ${display_order || 0}, ${is_active !== false}, NOW(), NOW())
       RETURNING *
     `;
 
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, title, description, image_url, details, sort_order } = body;
+    const { id, title, slug, short_description, full_description, icon, image_url, features, display_order, is_active } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
@@ -50,10 +52,14 @@ export async function PUT(req: NextRequest) {
     const service = await sql`
       UPDATE cms_services 
       SET title = ${title}, 
-          description = ${description},
+          slug = ${slug},
+          short_description = ${short_description},
+          full_description = ${full_description},
+          icon = ${icon},
           image_url = ${image_url},
-          details = ${details},
-          sort_order = ${sort_order},
+          features = ${JSON.stringify(features || [])},
+          display_order = ${display_order},
+          is_active = ${is_active},
           updated_at = NOW()
       WHERE id = ${id}
       RETURNING *

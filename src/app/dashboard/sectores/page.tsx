@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit2, Loader } from 'lucide-react';
 
 interface Sector {
-  id: string;
-  name: string;
-  description: string;
+  id: number;
+  title: string;
+  slug: string;
+  short_description: string;
+  full_description: string;
   icon: string;
-  color: string;
-  sort_order: number;
+  image_url: string;
+  display_order: number;
+  is_active: boolean;
 }
 
 export default function SectoresPage() {
@@ -17,11 +20,14 @@ export default function SectoresPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Sector | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    title: '',
+    slug: '',
+    short_description: '',
+    full_description: '',
     icon: '',
-    color: '#FF6B35',
-    sort_order: 0,
+    image_url: '',
+    display_order: 0,
+    is_active: true,
   });
 
   useEffect(() => {
@@ -43,8 +49,8 @@ export default function SectoresPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const method = editing ? 'PUT' : 'POST';
-      const body = editing ? { id: editing.id, ...formData } : formData;
+      const method = editing?.id ? 'PUT' : 'POST';
+      const body = editing?.id ? { id: editing.id, ...formData } : formData;
 
       const res = await fetch('/api/sectors', {
         method,
@@ -55,14 +61,14 @@ export default function SectoresPage() {
       if (res.ok) {
         fetchSectors();
         setEditing(null);
-        setFormData({ name: '', description: '', icon: '', color: '#FF6B35', sort_order: 0 });
+        setFormData({ title: '', slug: '', short_description: '', full_description: '', icon: '', image_url: '', display_order: 0, is_active: true });
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm('¿Eliminar este sector?')) return;
     try {
       const res = await fetch('/api/sectors', {
@@ -82,11 +88,14 @@ export default function SectoresPage() {
   const handleEdit = (sector: Sector) => {
     setEditing(sector);
     setFormData({
-      name: sector.name,
-      description: sector.description,
-      icon: sector.icon,
-      color: sector.color,
-      sort_order: sector.sort_order,
+      title: sector.title || '',
+      slug: sector.slug || '',
+      short_description: sector.short_description || '',
+      full_description: sector.full_description || '',
+      icon: sector.icon || '',
+      image_url: sector.image_url || '',
+      display_order: sector.display_order || 0,
+      is_active: sector.is_active !== false,
     });
   };
 
@@ -114,19 +123,35 @@ export default function SectoresPage() {
           
           <input
             type="text"
-            placeholder="Nombre"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="Título"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
             required
           />
+
+          <input
+            type="text"
+            placeholder="Slug (ej: mineria)"
+            value={formData.slug}
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            className="w-full px-3 py-2 border rounded-lg"
+          />
           
           <textarea
-            placeholder="Descripción"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Descripción corta"
+            value={formData.short_description}
+            onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
             rows={3}
+          />
+
+          <textarea
+            placeholder="Descripción completa"
+            value={formData.full_description}
+            onChange={(e) => setFormData({ ...formData, full_description: e.target.value })}
+            className="w-full px-3 py-2 border rounded-lg"
+            rows={5}
           />
           
           <input
@@ -138,20 +163,30 @@ export default function SectoresPage() {
           />
           
           <input
-            type="color"
-            placeholder="Color"
-            value={formData.color}
-            onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+            type="text"
+            placeholder="URL de imagen"
+            value={formData.image_url}
+            onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
           />
           
           <input
             type="number"
-            placeholder="Orden"
-            value={formData.sort_order}
-            onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) })}
+            placeholder="Orden de visualización"
+            value={formData.display_order}
+            onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
             className="w-full px-3 py-2 border rounded-lg"
           />
+
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+              className="w-4 h-4"
+            />
+            <span>Activo</span>
+          </label>
           
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
@@ -161,7 +196,7 @@ export default function SectoresPage() {
               type="button"
               onClick={() => {
                 setEditing(null);
-                setFormData({ name: '', description: '', icon: '', color: '#FF6B35', sort_order: 0 });
+                setFormData({ title: '', slug: '', short_description: '', full_description: '', icon: '', image_url: '', display_order: 0, is_active: true });
               }}
               className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
             >
@@ -177,15 +212,12 @@ export default function SectoresPage() {
         ) : (
           sectors.map((sector) => (
             <div key={sector.id} className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1">
-                <div
-                  className="w-8 h-8 rounded-full"
-                  style={{ backgroundColor: sector.color }}
-                />
-                <div className="flex-1">
-                  <h3 className="font-bold text-brayton-navy">{sector.name}</h3>
-                  <p className="text-sm text-brayton-slate">{sector.description}</p>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-brayton-navy">{sector.title}</h3>
+                  {!sector.is_active && <span className="text-xs px-2 py-0.5 bg-gray-200 text-gray-600 rounded">Inactivo</span>}
                 </div>
+                <p className="text-sm text-brayton-slate">{sector.short_description}</p>
               </div>
               <div className="flex gap-2">
                 <button

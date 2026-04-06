@@ -4,13 +4,19 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit2, Loader } from 'lucide-react';
 
 interface Project {
-  id: string;
+  id: number;
   title: string;
-  description: string;
-  details: string;
-  image_url: string;
-  sector_id: string | null;
-  sort_order: number;
+  slug: string;
+  short_description: string;
+  full_description: string;
+  category: string;
+  client: string;
+  location: string;
+  year: number;
+  main_image_url: string;
+  display_order: number;
+  is_featured: boolean;
+  is_active: boolean;
 }
 
 export default function ProyectosPage() {
@@ -19,11 +25,17 @@ export default function ProyectosPage() {
   const [editing, setEditing] = useState<Project | null>(null);
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
-    details: '',
-    image_url: '',
-    sector_id: '',
-    sort_order: 0,
+    slug: '',
+    short_description: '',
+    full_description: '',
+    category: '',
+    client: '',
+    location: '',
+    year: new Date().getFullYear(),
+    main_image_url: '',
+    display_order: 0,
+    is_featured: false,
+    is_active: true,
   });
 
   useEffect(() => {
@@ -45,8 +57,8 @@ export default function ProyectosPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const method = editing ? 'PUT' : 'POST';
-      const body = editing ? { id: editing.id, ...formData } : formData;
+      const method = editing?.id ? 'PUT' : 'POST';
+      const body = editing?.id ? { id: editing.id, ...formData } : formData;
 
       const res = await fetch('/api/projects', {
         method,
@@ -59,11 +71,17 @@ export default function ProyectosPage() {
         setEditing(null);
         setFormData({
           title: '',
-          description: '',
-          details: '',
-          image_url: '',
-          sector_id: '',
-          sort_order: 0,
+          slug: '',
+          short_description: '',
+          full_description: '',
+          category: '',
+          client: '',
+          location: '',
+          year: new Date().getFullYear(),
+          main_image_url: '',
+          display_order: 0,
+          is_featured: false,
+          is_active: true,
         });
       }
     } catch (error) {
@@ -71,7 +89,7 @@ export default function ProyectosPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm('¿Eliminar este proyecto?')) return;
     try {
       const res = await fetch('/api/projects', {
@@ -92,11 +110,17 @@ export default function ProyectosPage() {
     setEditing(project);
     setFormData({
       title: project.title,
-      description: project.description,
-      details: project.details,
-      image_url: project.image_url,
-      sector_id: project.sector_id || '',
-      sort_order: project.sort_order,
+      slug: project.slug || '',
+      short_description: project.short_description || '',
+      full_description: project.full_description || '',
+      category: project.category || '',
+      client: project.client || '',
+      location: project.location || '',
+      year: project.year || new Date().getFullYear(),
+      main_image_url: project.main_image_url || '',
+      display_order: project.display_order || 0,
+      is_featured: project.is_featured || false,
+      is_active: project.is_active !== false,
     });
   };
 
@@ -122,46 +146,119 @@ export default function ProyectosPage() {
         <form onSubmit={handleSave} className="bg-white rounded-lg shadow p-6 space-y-4">
           <h2 className="text-xl font-bold">{editing.id ? 'Editar' : 'Nuevo'} Proyecto</h2>
           
-          <input
-            type="text"
-            placeholder="Título"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full px-3 py-2 border rounded-lg"
-            required
-          />
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              placeholder="Título"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+            />
+            
+            <input
+              type="text"
+              placeholder="Slug (ej: edificio-comercial)"
+              value={formData.slug}
+              onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
           
           <textarea
-            placeholder="Descripción"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Descripción corta"
+            value={formData.short_description}
+            onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
             rows={3}
           />
           
           <textarea
-            placeholder="Detalles completos"
-            value={formData.details}
-            onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+            placeholder="Descripción completa"
+            value={formData.full_description}
+            onChange={(e) => setFormData({ ...formData, full_description: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
-            rows={3}
+            rows={5}
           />
-          
-          <input
-            type="text"
-            placeholder="URL de imagen"
-            value={formData.image_url}
-            onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-            className="w-full px-3 py-2 border rounded-lg"
-          />
-          
-          <input
-            type="number"
-            placeholder="Orden"
-            value={formData.sort_order}
-            onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) })}
-            className="w-full px-3 py-2 border rounded-lg"
-          />
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+            >
+              <option value="">Seleccionar categoría</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Residencial">Residencial</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Agro">Agro</option>
+              <option value="Minería">Minería</option>
+              <option value="Infraestructura">Infraestructura</option>
+            </select>
+
+            <input
+              type="text"
+              placeholder="Cliente"
+              value={formData.client}
+              onChange={(e) => setFormData({ ...formData, client: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            
+            <input
+              type="text"
+              placeholder="Ubicación"
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <input
+              type="number"
+              placeholder="Año"
+              value={formData.year}
+              onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || new Date().getFullYear() })}
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            
+            <input
+              type="text"
+              placeholder="URL de imagen principal"
+              value={formData.main_image_url}
+              onChange={(e) => setFormData({ ...formData, main_image_url: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            
+            <input
+              type="number"
+              placeholder="Orden"
+              value={formData.display_order}
+              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.is_featured}
+                onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                className="w-4 h-4"
+              />
+              <span>Destacado</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                className="w-4 h-4"
+              />
+              <span>Activo</span>
+            </label>
+          </div>
           
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
@@ -173,11 +270,17 @@ export default function ProyectosPage() {
                 setEditing(null);
                 setFormData({
                   title: '',
-                  description: '',
-                  details: '',
-                  image_url: '',
-                  sector_id: '',
-                  sort_order: 0,
+                  slug: '',
+                  short_description: '',
+                  full_description: '',
+                  category: '',
+                  client: '',
+                  location: '',
+                  year: new Date().getFullYear(),
+                  main_image_url: '',
+                  display_order: 0,
+                  is_featured: false,
+                  is_active: true,
                 });
               }}
               className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
@@ -195,8 +298,12 @@ export default function ProyectosPage() {
           projects.map((project) => (
             <div key={project.id} className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="font-bold text-brayton-navy">{project.title}</h3>
-                <p className="text-sm text-brayton-slate">{project.description}</p>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-brayton-navy">{project.title}</h3>
+                  {project.is_featured && <span className="text-xs px-2 py-0.5 bg-brayton-accent text-white rounded">Destacado</span>}
+                  {!project.is_active && <span className="text-xs px-2 py-0.5 bg-gray-200 text-gray-600 rounded">Inactivo</span>}
+                </div>
+                <p className="text-sm text-brayton-slate">{project.client} - {project.location} ({project.year})</p>
               </div>
               <div className="flex gap-2">
                 <button
