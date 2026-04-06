@@ -5,7 +5,7 @@ const sql = neon(process.env.DATABASE_URL!);
 
 export async function GET() {
   try {
-    const projects = await sql`SELECT * FROM projects ORDER BY featured DESC, created_at DESC LIMIT 50`;
+    const projects = await sql`SELECT * FROM cms_projects ORDER BY sort_order ASC`;
     return NextResponse.json(projects);
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, description, category, image_url, client, location, year, featured, details } = body;
+    const { title, description, image_url, details, sector_id, sort_order } = body;
 
     if (!title || !description) {
       return NextResponse.json(
@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
     }
 
     const project = await sql`
-      INSERT INTO projects (title, description, category, image_url, client, location, year, featured, details, created_at, updated_at)
-      VALUES (${title}, ${description}, ${category || ''}, ${image_url || ''}, ${client || ''}, ${location || ''}, ${year || new Date().getFullYear()}, ${featured || false}, ${details || ''}, NOW(), NOW())
+      INSERT INTO cms_projects (title, description, image_url, details, sector_id, sort_order, created_at, updated_at)
+      VALUES (${title}, ${description}, ${image_url || ''}, ${details || ''}, ${sector_id || null}, ${sort_order || 0}, NOW(), NOW())
       RETURNING *
     `;
 
@@ -41,23 +41,20 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, title, description, category, image_url, client, location, year, featured, details } = body;
+    const { id, title, description, image_url, details, sector_id, sort_order } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
     }
 
     const project = await sql`
-      UPDATE projects 
+      UPDATE cms_projects 
       SET title = ${title}, 
           description = ${description},
-          category = ${category},
           image_url = ${image_url},
-          client = ${client},
-          location = ${location},
-          year = ${year},
-          featured = ${featured},
           details = ${details},
+          sector_id = ${sector_id || null},
+          sort_order = ${sort_order},
           updated_at = NOW()
       WHERE id = ${id}
       RETURNING *
@@ -72,14 +69,14 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    const body = await req.json();
+    const { id } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
     }
 
-    await sql`DELETE FROM projects WHERE id = ${id}`;
+    await sql`DELETE FROM cms_projects WHERE id = ${id}`;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting project:', error);

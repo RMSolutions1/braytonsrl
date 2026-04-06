@@ -7,12 +7,10 @@ interface Project {
   id: string;
   title: string;
   description: string;
-  category: string;
+  details: string;
   image_url: string;
-  client: string;
-  location: string;
-  year: number;
-  featured: boolean;
+  sector_id: string | null;
+  sort_order: number;
 }
 
 export default function ProyectosPage() {
@@ -22,12 +20,10 @@ export default function ProyectosPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: '',
+    details: '',
     image_url: '',
-    client: '',
-    location: '',
-    year: new Date().getFullYear(),
-    featured: false,
+    sector_id: '',
+    sort_order: 0,
   });
 
   useEffect(() => {
@@ -64,12 +60,10 @@ export default function ProyectosPage() {
         setFormData({
           title: '',
           description: '',
-          category: '',
+          details: '',
           image_url: '',
-          client: '',
-          location: '',
-          year: new Date().getFullYear(),
-          featured: false,
+          sector_id: '',
+          sort_order: 0,
         });
       }
     } catch (error) {
@@ -99,12 +93,10 @@ export default function ProyectosPage() {
     setFormData({
       title: project.title,
       description: project.description,
-      category: project.category,
+      details: project.details,
       image_url: project.image_url,
-      client: project.client,
-      location: project.location,
-      year: project.year,
-      featured: project.featured,
+      sector_id: project.sector_id || '',
+      sort_order: project.sort_order,
     });
   };
 
@@ -147,41 +139,12 @@ export default function ProyectosPage() {
             rows={3}
           />
           
-          <select
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+          <textarea
+            placeholder="Detalles completos"
+            value={formData.details}
+            onChange={(e) => setFormData({ ...formData, details: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
-          >
-            <option value="">Seleccionar categoría</option>
-            <option value="Comercial">Comercial</option>
-            <option value="Residencial">Residencial</option>
-            <option value="Industrial">Industrial</option>
-            <option value="Agro">Agro</option>
-            <option value="Minería">Minería</option>
-          </select>
-          
-          <input
-            type="text"
-            placeholder="Cliente"
-            value={formData.client}
-            onChange={(e) => setFormData({ ...formData, client: e.target.value })}
-            className="w-full px-3 py-2 border rounded-lg"
-          />
-          
-          <input
-            type="text"
-            placeholder="Ubicación"
-            value={formData.location}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            className="w-full px-3 py-2 border rounded-lg"
-          />
-          
-          <input
-            type="number"
-            placeholder="Año"
-            value={formData.year}
-            onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-            className="w-full px-3 py-2 border rounded-lg"
+            rows={3}
           />
           
           <input
@@ -192,15 +155,13 @@ export default function ProyectosPage() {
             className="w-full px-3 py-2 border rounded-lg"
           />
           
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={formData.featured}
-              onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-              className="w-4 h-4"
-            />
-            <span>Destacado</span>
-          </label>
+          <input
+            type="number"
+            placeholder="Orden"
+            value={formData.sort_order}
+            onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border rounded-lg"
+          />
           
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
@@ -213,12 +174,10 @@ export default function ProyectosPage() {
                 setFormData({
                   title: '',
                   description: '',
-                  category: '',
+                  details: '',
                   image_url: '',
-                  client: '',
-                  location: '',
-                  year: new Date().getFullYear(),
-                  featured: false,
+                  sector_id: '',
+                  sort_order: 0,
                 });
               }}
               className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
@@ -236,11 +195,8 @@ export default function ProyectosPage() {
           projects.map((project) => (
             <div key={project.id} className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
               <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-brayton-navy">{project.title}</h3>
-                  {project.featured && <span className="text-xs px-2 py-1 bg-brayton-accent text-white rounded">Destacado</span>}
-                </div>
-                <p className="text-sm text-brayton-slate">{project.client} • {project.location} • {project.year}</p>
+                <h3 className="font-bold text-brayton-navy">{project.title}</h3>
+                <p className="text-sm text-brayton-slate">{project.description}</p>
               </div>
               <div className="flex gap-2">
                 <button

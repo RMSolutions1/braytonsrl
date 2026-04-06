@@ -5,10 +5,10 @@ import { Plus, Trash2, Edit2, Loader } from 'lucide-react';
 
 interface Sector {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  details: string;
-  image_url: string;
+  icon: string;
+  color: string;
   sort_order: number;
 }
 
@@ -17,10 +17,10 @@ export default function SectoresPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Sector | null>(null);
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     description: '',
-    details: '',
-    image_url: '',
+    icon: '',
+    color: '#FF6B35',
     sort_order: 0,
   });
 
@@ -55,7 +55,7 @@ export default function SectoresPage() {
       if (res.ok) {
         fetchSectors();
         setEditing(null);
-        setFormData({ title: '', description: '', details: '', image_url: '', sort_order: 0 });
+        setFormData({ name: '', description: '', icon: '', color: '#FF6B35', sort_order: 0 });
       }
     } catch (error) {
       console.error('Error:', error);
@@ -82,10 +82,10 @@ export default function SectoresPage() {
   const handleEdit = (sector: Sector) => {
     setEditing(sector);
     setFormData({
-      title: sector.title,
+      name: sector.name,
       description: sector.description,
-      details: sector.details,
-      image_url: sector.image_url,
+      icon: sector.icon,
+      color: sector.color,
       sort_order: sector.sort_order,
     });
   };
@@ -114,34 +114,34 @@ export default function SectoresPage() {
           
           <input
             type="text"
-            placeholder="Título"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            placeholder="Nombre"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
             required
           />
           
           <textarea
-            placeholder="Descripción corta"
+            placeholder="Descripción"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
             rows={3}
           />
           
-          <textarea
-            placeholder="Detalles completos"
-            value={formData.details}
-            onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+          <input
+            type="text"
+            placeholder="Icono (ej: FaIndustry)"
+            value={formData.icon}
+            onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
-            rows={3}
           />
           
           <input
-            type="text"
-            placeholder="URL de imagen"
-            value={formData.image_url}
-            onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+            type="color"
+            placeholder="Color"
+            value={formData.color}
+            onChange={(e) => setFormData({ ...formData, color: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg"
           />
           
@@ -161,7 +161,7 @@ export default function SectoresPage() {
               type="button"
               onClick={() => {
                 setEditing(null);
-                setFormData({ title: '', description: '', details: '', image_url: '', sort_order: 0 });
+                setFormData({ name: '', description: '', icon: '', color: '#FF6B35', sort_order: 0 });
               }}
               className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
             >
@@ -177,9 +177,15 @@ export default function SectoresPage() {
         ) : (
           sectors.map((sector) => (
             <div key={sector.id} className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="font-bold text-brayton-navy">{sector.title}</h3>
-                <p className="text-sm text-brayton-slate">{sector.description}</p>
+              <div className="flex items-center gap-3 flex-1">
+                <div
+                  className="w-8 h-8 rounded-full"
+                  style={{ backgroundColor: sector.color }}
+                />
+                <div className="flex-1">
+                  <h3 className="font-bold text-brayton-navy">{sector.name}</h3>
+                  <p className="text-sm text-brayton-slate">{sector.description}</p>
+                </div>
               </div>
               <div className="flex gap-2">
                 <button

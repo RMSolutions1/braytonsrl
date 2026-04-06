@@ -6,25 +6,26 @@ export async function GET(request: NextRequest) {
 
     if (!token) {
       return NextResponse.json(
-        { authenticated: false },
+        { error: 'No authenticated' },
         { status: 401 }
       );
     }
 
     try {
       const user = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
-      return NextResponse.json({ authenticated: true, user });
+      return NextResponse.json({ user });
     } catch {
       return NextResponse.json(
-        { authenticated: false },
+        { error: 'Invalid token' },
         { status: 401 }
       );
     }
   } catch (error) {
     console.error('Error verificando sesión:', error);
     return NextResponse.json(
-      { authenticated: false },
+      { error: 'Error' },
       { status: 401 }
     );
   }
 }
+
