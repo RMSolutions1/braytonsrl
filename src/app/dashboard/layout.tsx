@@ -12,9 +12,9 @@ const MENU = [
   { href: '/dashboard/servicios', label: 'Gestionar Servicios', icon: Wrench, roles: ['SuperAdmin', 'Administrador'] },
   { href: '/dashboard/proyectos', label: 'Gestionar Proyectos', icon: Settings, roles: ['SuperAdmin', 'Administrador'] },
   { href: '/dashboard/sectores', label: 'Gestionar Sectores', icon: Settings, roles: ['SuperAdmin', 'Administrador'] },
-  { href: '/dashboard/messages', label: 'Mensajes de Contacto', icon: Mail, roles: ['SuperAdmin', 'Administrador'] },
-  { href: '/dashboard/quotes', label: 'Cotizaciones', icon: FileText, roles: ['SuperAdmin', 'Administrador'] },
-  { href: '/dashboard/applications', label: 'Solicitudes de Empleo', icon: Users, roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
+  { href: '/dashboard/mensajes', label: 'Mensajes de Contacto', icon: Mail, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/cotizaciones', label: 'Cotizaciones', icon: FileText, roles: ['SuperAdmin', 'Administrador'] },
+  { href: '/dashboard/solicitudes-empleo', label: 'Solicitudes de Empleo', icon: Users, roles: ['SuperAdmin', 'Administrador', 'RRHH'] },
 ];
 
 export default function DashboardLayout({
