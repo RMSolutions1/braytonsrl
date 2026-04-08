@@ -30,7 +30,7 @@ export default function MensajesPage() {
 
   useEffect(() => {
     fetchMessages();
-  }, [filter]);
+  }, [filter, fetchMessages]);
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });

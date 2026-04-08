@@ -36,7 +36,7 @@ export default function ClientDashboardLayout({
         } else {
           router.replace('/admin/login');
         }
-      } catch (error) {
+      } catch (_error) {
         router.replace('/admin/login');
       } finally {
         setLoading(false);

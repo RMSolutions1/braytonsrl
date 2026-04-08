@@ -15,7 +15,7 @@ export default function ClientDashboard() {
     activeProjects: 0,
     totalSpent: 0,
   });
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Cargar estadísticas del cliente

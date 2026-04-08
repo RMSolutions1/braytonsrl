@@ -53,7 +53,7 @@ export default function LoginForm() {
 
       router.push(dashboardRoutes[userType]);
       router.refresh();
-    } catch (err) {
+    } catch (_err) {
       setError('Error al procesar la solicitud');
       setLoading(false);
     }

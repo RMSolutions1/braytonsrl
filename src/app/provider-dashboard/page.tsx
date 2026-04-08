@@ -15,7 +15,7 @@ export default function ProviderDashboard() {
     activeProjects: 0,
     totalMessages: 0,
   });
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Cargar estadísticas del proveedor

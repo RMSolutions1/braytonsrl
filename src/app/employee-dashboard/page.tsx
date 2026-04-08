@@ -15,7 +15,7 @@ export default function EmployeeDashboard() {
     completedTasks: 0,
     pendingTasks: 0,
   });
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Cargar estadísticas del empleado
