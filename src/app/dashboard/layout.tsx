@@ -178,7 +178,7 @@ export default function DashboardLayout({
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
-                <Icon size={20} />
+                <Icon className="w-5 h-5" />
                 {item.label}
               </Link>
             );
@@ -191,7 +191,7 @@ export default function DashboardLayout({
             onClick={logout}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
           >
-            <LogOut size={20} />
+            <LogOut className="w-5 h-5" />
             Cerrar Sesión
           </button>
         </div>
