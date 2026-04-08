@@ -28,15 +28,6 @@ export default function MensajesPage() {
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  useEffect(() => {
-    fetchMessages();
-  }, [filter, fetchMessages]);
-
-  const showNotification = (type: 'success' | 'error', message: string) => {
-    setNotification({ type, message });
-    setTimeout(() => setNotification(null), 3000);
-  };
-
   const fetchMessages = async () => {
     try {
       setLoading(true);
@@ -47,10 +38,19 @@ export default function MensajesPage() {
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
-      showNotification('error', 'Error al cargar los mensajes');
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 3000);
   };
 
   const handleViewMessage = async (msg: ContactMessage) => {
