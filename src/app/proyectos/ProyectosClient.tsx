@@ -1,20 +1,73 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Project } from '@/data/projects';
+import { Loader } from 'lucide-react';
 
-const sectors = ['Todos', 'Industrial', 'Comercial', 'Obras públicas', 'Agro', 'Factory', 'Minería'];
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  image_url: string;
+  client: string;
+  location: string;
+  year: number;
+  featured: boolean;
+}
 
-export default function ProyectosClient({ initialProjects }: { initialProjects: Project[] }) {
+const defaultProjects: Project[] = [
+  {
+    id: '1',
+    title: 'Proyecto 1',
+    description: 'Descripción del proyecto',
+    category: 'Comercial',
+    image_url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80',
+    client: 'Cliente',
+    location: 'Ubicación',
+    year: 2024,
+    featured: false,
+  },
+];
+
+const sectors = ['Todos', 'Comercial', 'Residencial', 'Industrial', 'Agro', 'Factory', 'Minería'];
+
+export default function ProyectosClient() {
   const [filter, setFilter] = useState('Todos');
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('/api/projects');
+        const data = await res.json();
+        setProjects(Array.isArray(data) && data.length > 0 ? data : defaultProjects);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setProjects(defaultProjects);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const filtered = useMemo(() => {
-    if (filter === 'Todos') return initialProjects;
-    return initialProjects.filter((p) => p.sector === filter);
-  }, [initialProjects, filter]);
+    if (filter === 'Todos') return projects;
+    return projects.filter((p) => p.category === filter);
+  }, [projects, filter]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <Loader className="animate-spin w-8 h-8 text-brayton-accent" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
@@ -45,23 +98,32 @@ export default function ProyectosClient({ initialProjects }: { initialProjects: 
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
             >
-              <Link href={`/proyectos/${project.slug}`} className="block group">
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-brayton-steel">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brayton-navy/90 via-transparent to-transparent opacity-80" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <span className="text-xs font-semibold text-brayton-accent uppercase tracking-wider">
-                      {project.sector}
-                    </span>
-                    <h2 className="mt-1 font-display font-semibold text-lg group-hover:text-brayton-accent transition-colors">
-                      {project.title}
-                    </h2>
+              <Link href="#" className="block group">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-brayton-slate">
+                  {project.image_url ? (
+                    <Image
+                      src={project.image_url}
+                      alt={project.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-brayton-navy/20 to-brayton-accent/20" />
+                  )}
+                  {project.featured && (
+                    <div className="absolute top-3 right-3 px-3 py-1 bg-brayton-accent text-white text-xs font-bold rounded">
+                      Destacado
+                    </div>
+                  )}
+                </div>
+                <div className="mt-4 space-y-2">
+                  <h3 className="font-display font-bold text-lg text-brayton-navy group-hover:text-brayton-accent transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-brayton-slate line-clamp-2">{project.description}</p>
+                  <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
+                    <span>{project.client}</span>
+                    <span>{project.year}</span>
                   </div>
                 </div>
               </Link>

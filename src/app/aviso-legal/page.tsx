@@ -15,7 +15,7 @@ const fiscalData = [
   { label: 'Domicilio fiscal', value: 'Pasaje Santa Victoria 762, Barrio Centro, 4400 Salta, Salta, Argentina' },
   { label: 'Inscripción', value: 'Constancia de inscripción AFIP/ARCA. Impuestos nacionales y provinciales (IIBB Salta) según normativa vigente.' },
   { label: 'Email', value: 'contacto@braytonsrl.com.ar' },
-  { label: 'Teléfono', value: '+54 9 11 1234-5678' },
+  { label: 'Teléfono', value: '+54 387 4498588' },
 ];
 
 export default function AvisoLegalPage() {
