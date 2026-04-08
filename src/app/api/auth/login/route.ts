@@ -2,66 +2,118 @@ import { neon } from '@neondatabase/serverless';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 
-// Credenciales de admin por defecto (fallback)
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'Brayton2024!';
-const ADMIN_ROLE = 'Administrador';
-
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
+    const { email, password, userType = 'admin' } = await request.json();
 
-    if (!username || !password) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Usuario y contraseña son requeridos' },
+        { error: 'Correo y contraseña son requeridos' },
         { status: 400 }
       );
     }
 
     let user = null;
+    let redirectUrl = '/dashboard';
 
-    // Intentar autenticar con la base de datos primero
     if (process.env.DATABASE_URL) {
-      try {
-        const sql = neon(process.env.DATABASE_URL);
-        
-        // Verificar si la tabla existe y obtener el usuario
-        const users = await sql`
-          SELECT id, username, password_hash, role FROM admin_users 
-          WHERE username = ${username} AND active = true
-        `;
+      const sql = neon(process.env.DATABASE_URL);
 
-        if (users.length > 0) {
-          const dbUser = users[0];
-          const isPasswordValid = await bcrypt.compare(password, dbUser.password_hash);
-          
-          if (isPasswordValid) {
-            user = {
-              id: dbUser.id,
-              username: dbUser.username,
-              role: dbUser.role
-            };
+      try {
+        if (userType === 'admin') {
+          // Autenticar administrador desde admin_users
+          const users = await sql`
+            SELECT id, email, password_hash, role, status FROM admin_users 
+            WHERE email = ${email} AND status = 'active'
+          `;
+
+          if (users.length > 0) {
+            const dbUser = users[0];
+            const isPasswordValid = await bcrypt.compare(password, dbUser.password_hash);
+            
+            if (isPasswordValid) {
+              user = {
+                id: dbUser.id,
+                email: dbUser.email,
+                userType: 'admin',
+                role: dbUser.role
+              };
+              redirectUrl = '/dashboard';
+            }
+          }
+        } else if (userType === 'provider') {
+          // Autenticar proveedor desde providers
+          const providers = await sql`
+            SELECT id, email, password_hash, company_name, status FROM providers 
+            WHERE email = ${email} AND status = 'active'
+          `;
+
+          if (providers.length > 0) {
+            const provider = providers[0];
+            const isPasswordValid = await bcrypt.compare(password, provider.password_hash);
+            
+            if (isPasswordValid) {
+              user = {
+                id: provider.id,
+                email: provider.email,
+                userType: 'provider',
+                name: provider.company_name
+              };
+              redirectUrl = '/provider-dashboard';
+            }
+          }
+        } else if (userType === 'employee') {
+          // Autenticar empleado desde employees
+          const employees = await sql`
+            SELECT id, email, password_hash, full_name, status FROM employees 
+            WHERE email = ${email} AND status = 'active'
+          `;
+
+          if (employees.length > 0) {
+            const employee = employees[0];
+            const isPasswordValid = await bcrypt.compare(password, employee.password_hash);
+            
+            if (isPasswordValid) {
+              user = {
+                id: employee.id,
+                email: employee.email,
+                userType: 'employee',
+                name: employee.full_name
+              };
+              redirectUrl = '/employee-dashboard';
+            }
+          }
+        } else if (userType === 'client') {
+          // Autenticar cliente desde clients
+          const clients = await sql`
+            SELECT id, email, password_hash, full_name, status FROM clients 
+            WHERE email = ${email} AND status = 'active'
+          `;
+
+          if (clients.length > 0) {
+            const client = clients[0];
+            const isPasswordValid = await bcrypt.compare(password, client.password_hash);
+            
+            if (isPasswordValid) {
+              user = {
+                id: client.id,
+                email: client.email,
+                userType: 'client',
+                name: client.full_name
+              };
+              redirectUrl = '/client-dashboard';
+            }
           }
         }
       } catch (dbError) {
-        console.error('[v0] Error de base de datos, usando fallback:', dbError);
-        // Continuar con el fallback
+        console.error('[v0] Error de base de datos:', dbError);
       }
     }
 
-    // Fallback: autenticación con credenciales hardcodeadas
-    if (!user && username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      user = {
-        id: 1,
-        username: ADMIN_USERNAME,
-        role: ADMIN_ROLE
-      };
-    }
-
-    // Si no se autenticó de ninguna manera
+    // Si no se autenticó
     if (!user) {
       return NextResponse.json(
-        { error: 'Usuario o contraseña incorrectos' },
+        { error: 'Correo o contraseña incorrectos' },
         { status: 401 }
       );
     }
@@ -69,11 +121,14 @@ export async function POST(request: NextRequest) {
     // Crear respuesta con cookie de sesión
     const response = NextResponse.json(
       { 
-        success: true, 
+        success: true,
+        redirectUrl,
         user: { 
           id: user.id, 
-          username: user.username, 
-          role: user.role 
+          email: user.email,
+          userType: user.userType,
+          role: user.role,
+          name: user.name
         } 
       },
       { status: 200 }
@@ -82,9 +137,11 @@ export async function POST(request: NextRequest) {
     // Establecer cookie segura
     const token = Buffer.from(
       JSON.stringify({ 
-        id: user.id, 
-        username: user.username, 
+        id: user.id,
+        email: user.email,
+        userType: user.userType,
         role: user.role,
+        name: user.name,
         iat: Date.now()
       })
     ).toString('base64');

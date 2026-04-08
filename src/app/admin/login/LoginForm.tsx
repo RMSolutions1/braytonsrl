@@ -4,9 +4,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Loader } from 'lucide-react';
 
+type UserType = 'admin' | 'provider' | 'employee' | 'client';
+
+const USER_TYPES: { value: UserType; label: string }[] = [
+  { value: 'admin', label: 'Administración' },
+  { value: 'provider', label: 'Proveedor' },
+  { value: 'employee', label: 'Empleado' },
+  { value: 'client', label: 'Cliente' },
+];
+
 export default function LoginForm() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [userType, setUserType] = useState<UserType>('admin');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,7 +32,7 @@ export default function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password, userType }),
       });
 
       const data = await response.json();
@@ -33,8 +43,15 @@ export default function LoginForm() {
         return;
       }
 
-      // Redirigir al dashboard
-      router.push('/dashboard');
+      // Redirigir según el tipo de usuario
+      const dashboardRoutes: Record<UserType, string> = {
+        admin: '/dashboard',
+        provider: '/provider-dashboard',
+        employee: '/employee-dashboard',
+        client: '/client-dashboard',
+      };
+
+      router.push(dashboardRoutes[userType]);
       router.refresh();
     } catch (err) {
       setError('Error al procesar la solicitud');
@@ -43,7 +60,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
@@ -52,17 +69,41 @@ export default function LoginForm() {
         </div>
       )}
 
-      {/* Username Input */}
+      {/* User Type Selection */}
       <div>
-        <label htmlFor="username" className="block text-sm font-semibold text-brayton-navy mb-2">
-          Usuario
+        <label className="block text-sm font-semibold text-brayton-navy mb-3">
+          Tipo de Usuario
+        </label>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {USER_TYPES.map((type) => (
+            <button
+              key={type.value}
+              type="button"
+              onClick={() => setUserType(type.value)}
+              disabled={loading}
+              className={`p-3 rounded-lg border-2 transition-all text-center font-medium text-sm ${
+                userType === type.value
+                  ? 'border-brayton-accent bg-brayton-accent/10 text-brayton-accent'
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+              } disabled:opacity-50`}
+            >
+              {type.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Email Input */}
+      <div>
+        <label htmlFor="email" className="block text-sm font-semibold text-brayton-navy mb-2">
+          Correo Electrónico
         </label>
         <input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Ingresa tu usuario"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Ingresa tu correo"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brayton-accent focus:border-transparent transition-all"
           disabled={loading}
           required

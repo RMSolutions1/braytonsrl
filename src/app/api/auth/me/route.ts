@@ -15,7 +15,15 @@ export async function GET(request: NextRequest) {
 
     try {
       const user = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
-      return NextResponse.json({ user });
+      return NextResponse.json({ 
+        user: {
+          id: user.id,
+          email: user.email,
+          userType: user.userType || 'admin',
+          name: user.name,
+          role: user.role
+        }
+      });
     } catch {
       return NextResponse.json(
         { error: 'Invalid token' },
